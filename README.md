@@ -9,4 +9,23 @@ I'm a software engineer who is passionate about making contributing to open-sour
 - Sharing updates on <a href="www.linkedin.com/in/jafarkhan0">LinkedIn</a> 💼
 
 - 🔭 I’m currently working on <a href="https://github.com/zafarkhan-30/Vehical_Tracking_backend">Vehical Tracking </a>
+- 🌱 I'm currently learning:
+  - Data Structures and Algorithms on [LeetCode](https://leetcode.com/u/zafarkhan-30/)
+- 📬 How to reach me: [jafarkhan301999@gmail.com](mailto:jafarkhan301999@gmail.com)
+- 💪 This is where I write, code and solve problems
+- 💬 Ask me about anything, I am happy to help
+
+
+📊 <b>This Week I Spent My Time On</b>
+
+<!--START_SECTION:waka-->
+```text
+Markdown     5 hrs 3 mins    ███████████▒░░░░░░░░░░░░░   44.70 % 
+Java         4 hrs 35 mins   ██████████░░░░░░░░░░░░░░░   40.59 % 
+JavaScript   1 hr 34 mins    ███▒░░░░░░░░░░░░░░░░░░░░░   13.85 % 
+CSS          3 mins          ░░░░░░░░░░░░░░░░░░░░░░░░░   00.55 % 
+XML          2 mins          ░░░░░░░░░░░░░░░░░░░░░░░░░   00.31 % 
+```
+<!--END_SECTION:waka-->
+
 
