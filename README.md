@@ -4,8 +4,8 @@
 I'm a software engineer who is passionate about making contributing to open-source more approachable, creating technology to elevate people, and building community. Some technologies I enjoy working with include Python , Django RestFramework , Docker and Postgres. In 2021, I have started my tech journey as python developer.  My interest in the IOT and GIS which give me motivation to code and explore so many things.
 
 ## Find me around the web 🌎: <a href="https://github.com/zafarkhan-30"><img align="left" width="150" height="150" src="https://github.com/M0nica/M0nica/blob/main/octomonica/m0nica-octocat-rotating.gif?raw=true"></a>
-- Learning in public on <a href="https://www.twitch.tv/blacktechdiva">Twitch</a> or <a href="https://www.monica.dev">monica.dev</a> 📹 ✍🏾
-- Tinkering with interactions on <a href="https://codepen.io/m0nica"> Codepen</a> 🏓
+- Learning in public on <a href="https://www.youtube.com/watch?v=dGAgxozNWFE">Youtube</a> or <a href="https://dev.to/pragativerma18/django-caching-101-understanding-the-basics-and-beyond-49p">DevCommunity</a> 📹 ✍🏾
+- Solving Problems on <a href="https://leetcode.com/u/zafarkhan-30/"> LeetCode </a> 🏓
 - Sharing updates on <a href="www.linkedin.com/in/jafarkhan0">LinkedIn</a> 💼
 
 - 🔭 I’m currently working on <a href="https://github.com/zafarkhan-30/Vehical_Tracking_backend">Vehical Tracking </a>
