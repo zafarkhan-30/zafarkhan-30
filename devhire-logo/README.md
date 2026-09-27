@@ -17,3 +17,11 @@ The mark is a person inside code brackets `< 👤 >`: developers + hiring.
 
 Every variant is provided as scalable `.svg` plus a `.png` export.
 Wordmark font: Poppins ExtraBold (falls back to Montserrat / Segoe UI / Arial).
+
+## Ready-to-use files
+
+- **`devhire-logo-main.svg`**: main logo with the text converted to outlines (Poppins ExtraBold), so it looks identical everywhere without the font installed.
+- **`favicon.svg`**: favicon tuned for small sizes (thicker strokes, larger figure). Use it with:
+  ```html
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  ```
