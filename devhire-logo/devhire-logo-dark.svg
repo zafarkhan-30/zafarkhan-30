@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="960" height="320" role="img" aria-label="DevHire logo on dark background">
+  <defs>
+    <linearGradient id="dhBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#1D4ED8"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="160" rx="24" fill="#0A1633"/>
+  <g transform="translate(20 20)">
+    <rect width="120" height="120" rx="28" fill="url(#dhBlue)"/>
+    <path d="M40 38 L20 60 L40 82" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M80 38 L100 60 L80 82" fill="none" stroke="#FFFFFF" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="60" cy="47" r="9" fill="#F97316"/>
+    <path d="M45 84 C45 67 51 61 60 61 C69 61 75 67 75 84 Z" fill="#F97316"/>
+    <text x="140" y="80" font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="62" letter-spacing="-1.5"><tspan fill="#FFFFFF">Dev</tspan><tspan fill="#FB923C">Hire</tspan></text>
+  </g>
+</svg>

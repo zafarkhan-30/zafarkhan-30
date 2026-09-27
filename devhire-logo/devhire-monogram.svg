@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="512" height="512" role="img" aria-label="DevHire monogram">
+  <circle cx="60" cy="60" r="58" fill="#F97316"/>
+  <circle cx="60" cy="60" r="50" fill="#0B2A6F"/>
+  <text x="60" y="78" text-anchor="middle" font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="50" letter-spacing="-2"><tspan fill="#FFFFFF">D</tspan><tspan fill="#FB923C">H</tspan></text>
+</svg>

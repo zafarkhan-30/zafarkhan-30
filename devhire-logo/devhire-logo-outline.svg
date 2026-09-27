@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 120" width="880" height="240" role="img" aria-label="DevHire outline logo">
+  <path d="M40 38 L20 60 L40 82" fill="none" stroke="#1D4ED8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M80 38 L100 60 L80 82" fill="none" stroke="#1D4ED8" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="60" cy="47" r="9" fill="#F97316"/>
+  <path d="M45 84 C45 67 51 61 60 61 C69 61 75 67 75 84 Z" fill="#F97316"/>
+  <text x="124" y="80" font-family="Poppins, Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="62" letter-spacing="-1.5"><tspan fill="#1D4ED8">dev</tspan><tspan fill="#F97316">hire</tspan></text>
+</svg>
