@@ -53,3 +53,17 @@ def test_message_flow_and_dedupe(monkeypatch):
         r = client.post("/webhook", content=body, headers={"X-Hub-Signature-256": sign(body)})
         assert r.status_code == 200
     assert sent == [("919999", "echo:hi")]
+
+
+def test_prompt_includes_knowledge():
+    from app import config
+    assert "Syntechire" in config.SYSTEM_PROMPT and "KNOWLEDGE BASE" in config.SYSTEM_PROMPT
+
+
+def test_save_lead_writes_file(tmp_path, monkeypatch):
+    import asyncio
+    from app import config, leads
+    monkeypatch.setattr(config, "LEADS_FILE", str(tmp_path / "l.jsonl"))
+    monkeypatch.setattr(config, "OWNER_WHATSAPP", "")
+    asyncio.run(leads.save_lead("91999", {"requirement": "ecommerce site"}))
+    assert "ecommerce site" in (tmp_path / "l.jsonl").read_text()

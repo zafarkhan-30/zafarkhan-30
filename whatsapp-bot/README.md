@@ -26,3 +26,7 @@ ngrok http 8000             # or cloudflared; gives a public HTTPS URL
 - Temporary tokens expire in 24h. For production create a System User permanent token.
 - Customize behaviour with `BOT_SYSTEM_PROMPT`.
 - Tests: `python -m pytest`
+
+## Lead handling (Syntechire)
+- Edit `knowledge.md` with real prices, services and FAQs. The bot answers only from it.
+- When a lead shares their requirement the bot saves it to `leads.jsonl` and, if `OWNER_WHATSAPP` is set, alerts you on WhatsApp.
