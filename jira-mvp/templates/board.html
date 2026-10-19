@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tracker MVP</title>
+<style>
+  :root { --bg:#f4f5f7; --card:#fff; --ink:#172b4d; --muted:#6b778c; --line:#dfe1e6; --accent:#0052cc; }
+  * { box-sizing: border-box; }
+  body { margin:0; font:14px/1.4 system-ui, sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; gap:12px; align-items:center; padding:10px 16px; background:var(--card); border-bottom:1px solid var(--line); }
+  header h1 { font-size:16px; margin:0; flex:1; }
+  button { background:var(--accent); color:#fff; border:0; border-radius:3px; padding:6px 12px; cursor:pointer; font:inherit; }
+  button.secondary { background:#ebecf0; color:var(--ink); }
+  input, select, textarea { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:3px; background:#fff; color:var(--ink); }
+  textarea { width:100%; min-height:70px; }
+  .hidden { display:none !important; }
+  main { padding:16px; }
+  .center { max-width:340px; margin:60px auto; background:var(--card); padding:20px; border-radius:4px; display:grid; gap:10px; }
+  .toolbar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center; }
+  .board { display:grid; grid-template-columns:repeat(3, minmax(220px, 1fr)); gap:12px; align-items:start; }
+  .col { background:#ebecf0; border-radius:4px; padding:8px; min-height:120px; }
+  .col.over { outline:2px dashed var(--accent); }
+  .col h3 { margin:2px 4px 8px; font-size:12px; text-transform:uppercase; color:var(--muted); }
+  .issue { background:var(--card); border-radius:3px; padding:8px; margin-bottom:8px; box-shadow:0 1px 1px rgba(9,30,66,.25); cursor:grab; }
+  .issue .meta { display:flex; gap:6px; color:var(--muted); font-size:12px; margin-top:6px; flex-wrap:wrap; }
+  .badge { padding:0 6px; border-radius:8px; background:#dfe1e6; font-size:11px; }
+  .badge.bug { background:#ffbdad; } .badge.story { background:#abf5d1; } .badge.high { background:#ffd5cc; }
+  .project-list { display:grid; gap:8px; max-width:500px; }
+  .project-list .p { background:var(--card); padding:10px; border-radius:3px; cursor:pointer; }
+  dialog { border:0; border-radius:4px; width:min(560px, 94vw); padding:16px; }
+  dialog::backdrop { background:rgba(9,30,66,.5); }
+  .row { display:grid; gap:8px; margin-bottom:10px; }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .log { color:var(--muted); font-size:12px; margin:2px 0; }
+  .comment { background:var(--bg); padding:6px 8px; border-radius:3px; margin:6px 0; }
+  .err { color:#bf2600; min-height:1em; }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="title">Tracker MVP</h1>
+  <button class="secondary hidden" id="back">&larr; Projects</button>
+  <span id="whoami"></span>
+  <button class="secondary hidden" id="logout">Log out</button>
+</header>
+
+<main>
+  <!-- Auth -->
+  <section id="auth" class="center">
+    <h2 style="margin:0">Sign in</h2>
+    <input id="a-user" placeholder="Username" autocomplete="username">
+    <input id="a-pass" type="password" placeholder="Password (min 8 chars)" autocomplete="current-password">
+    <div class="err" id="a-err"></div>
+    <div class="two"><button id="login">Log in</button><button class="secondary" id="register">Register</button></div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="hidden">
+    <div class="toolbar">
+      <input id="p-key" placeholder="KEY" size="6" maxlength="10">
+      <input id="p-name" placeholder="Project name">
+      <button id="p-create">Create project</button>
+      <span class="err" id="p-err"></span>
+    </div>
+    <div class="project-list" id="project-list"></div>
+  </section>
+
+  <!-- Board -->
+  <section id="board-view" class="hidden">
+    <div class="toolbar">
+      <button id="new-issue">+ Create issue</button>
+      <input id="f-q" placeholder="Search…">
+      <select id="f-type"><option value="">All types</option><option value="task">Task</option><option value="bug">Bug</option><option value="story">Story</option></select>
+      <select id="f-priority"><option value="">All priorities</option><option value="low">Low</option><option value="medium">Medium</option><option value="high">High</option></select>
+      <select id="f-assignee"><option value="">Anyone</option></select>
+      <input id="add-member" placeholder="Add member (username)">
+      <button class="secondary" id="add-member-btn">Add</button>
+      <span class="err" id="b-err"></span>
+    </div>
+    <div class="board" id="board"></div>
+  </section>
+</main>
+
+<!-- Create/edit issue -->
+<dialog id="issue-dialog">
+  <form method="dialog" id="issue-form">
+    <h3 id="d-title" style="margin-top:0">Create issue</h3>
+    <div class="row"><input id="i-title" placeholder="Summary" required maxlength="200"></div>
+    <div class="row"><textarea id="i-desc" placeholder="Description"></textarea></div>
+    <div class="two row">
+      <select id="i-type"><option value="task">Task</option><option value="bug">Bug</option><option value="story">Story</option></select>
+      <select id="i-priority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
+    </div>
+    <div class="two row">
+      <select id="i-assignee"><option value="">Unassigned</option></select>
+      <input id="i-labels" placeholder="labels, comma separated">
+    </div>
+    <div class="err" id="i-err"></div>
+    <div id="detail-extra" class="hidden">
+      <h4>Comments</h4>
+      <div id="comments"></div>
+      <div class="row"><textarea id="c-body" placeholder="Add a comment…"></textarea><button type="button" id="c-add" class="secondary">Comment</button></div>
+      <h4>Activity</h4>
+      <div id="activity"></div>
+    </div>
+    <div class="two">
+      <button type="button" id="i-save">Save</button>
+      <button type="button" class="secondary" id="i-close">Close</button>
+    </div>
+    <button type="button" class="secondary hidden" id="i-delete" style="margin-top:8px">Delete issue</button>
+  </form>
+</dialog>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const STATUSES = [['todo','To Do'], ['in_progress','In Progress'], ['done','Done']];
+const state = { token: localStorage.getItem('token'), username: localStorage.getItem('username'), project: null, issues: [], members: [], editing: null };
+
+function esc(s) { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; }
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (state.token) headers.Authorization = 'Token ' + state.token;
+  const res = await fetch('/api/' + path, { ...opts, headers, body: opts.body ? JSON.stringify(opts.body) : undefined });
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) {
+    const msg = data && typeof data === 'object'
+      ? Object.entries(data).map(([k, v]) => (k === 'detail' ? '' : k + ': ') + (Array.isArray(v) ? v.join(' ') : v)).join('; ')
+      : res.statusText;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+function show(view) {
+  for (const id of ['auth', 'projects', 'board-view']) $(id).classList.toggle('hidden', id !== view);
+  $('back').classList.toggle('hidden', view !== 'board-view');
+  $('logout').classList.toggle('hidden', view === 'auth');
+  $('whoami').textContent = view === 'auth' ? '' : state.username;
+  $('title').textContent = view === 'board-view' ? state.project.key + ' — ' + state.project.name : 'Tracker MVP';
+}
+
+async function authenticate(kind) {
+  $('a-err').textContent = '';
+  try {
+    const username = $('a-user').value.trim(), password = $('a-pass').value;
+    let data = await api('auth/' + (kind === 'register' ? 'register/' : 'login/'), { method: 'POST', body: { username, password } });
+    state.token = data.token; state.username = username;
+    localStorage.setItem('token', state.token); localStorage.setItem('username', username);
+    loadProjects();
+  } catch (e) { $('a-err').textContent = e.message; }
+}
+
+async function loadProjects() {
+  show('projects');
+  try {
+    const list = await api('projects/');
+    $('project-list').innerHTML = list.map(p => `<div class="p" data-key="${esc(p.key)}"><b>${esc(p.key)}</b> ${esc(p.name)}</div>`).join('') || '<i>No projects yet.</i>';
+  } catch (e) { logout(); }
+}
+
+async function openProject(key) {
+  state.project = await api('projects/' + key + '/');
+  state.members = state.project.members;
+  const opts = state.members.map(m => `<option value="${m.id}">${esc(m.username)}</option>`).join('');
+  $('f-assignee').innerHTML = '<option value="">Anyone</option>' + state.members.map(m => `<option value="${esc(m.username)}">${esc(m.username)}</option>`).join('');
+  $('i-assignee').innerHTML = '<option value="">Unassigned</option>' + opts;
+  show('board-view');
+  loadIssues();
+}
+
+async function loadIssues() {
+  const q = new URLSearchParams();
+  if ($('f-q').value) q.set('q', $('f-q').value);
+  if ($('f-type').value) q.set('type', $('f-type').value);
+  if ($('f-priority').value) q.set('priority', $('f-priority').value);
+  if ($('f-assignee').value) q.set('assignee', $('f-assignee').value);
+  state.issues = await api(`projects/${state.project.key}/issues/?${q}`);
+  renderBoard();
+}
+
+function renderBoard() {
+  $('board').innerHTML = STATUSES.map(([s, label]) => {
+    const cards = state.issues.filter(i => i.status === s).map(i => `
+      <div class="issue" draggable="true" data-number="${i.number}">
+        <div>${esc(i.title)}</div>
+        <div class="meta"><b>${esc(i.key)}</b>
+          <span class="badge ${esc(i.type)}">${esc(i.type)}</span>
+          <span class="badge ${esc(i.priority)}">${esc(i.priority)}</span>
+          <span>${i.assignee ? esc(i.assignee.username) : 'unassigned'}</span></div>
+      </div>`).join('');
+    return `<div class="col" data-status="${s}"><h3>${label} (${state.issues.filter(i => i.status === s).length})</h3>${cards}</div>`;
+  }).join('');
+}
+
+async function moveIssue(number, status) {
+  $('b-err').textContent = '';
+  try {
+    await api(`projects/${state.project.key}/issues/${number}/`, { method: 'PATCH', body: { status } });
+  } catch (e) { $('b-err').textContent = e.message; }
+  loadIssues();
+}
+
+function openIssueDialog(issue) {
+  state.editing = issue || null;
+  $('i-err').textContent = '';
+  $('d-title').textContent = issue ? issue.key : 'Create issue';
+  $('i-title').value = issue ? issue.title : '';
+  $('i-desc').value = issue ? issue.description : '';
+  $('i-type').value = issue ? issue.type : 'task';
+  $('i-priority').value = issue ? issue.priority : 'medium';
+  $('i-assignee').value = issue && issue.assignee ? issue.assignee.id : '';
+  $('i-labels').value = issue ? issue.labels : '';
+  $('detail-extra').classList.toggle('hidden', !issue);
+  $('i-delete').classList.toggle('hidden', !issue);
+  if (issue) loadDetail();
+  $('issue-dialog').showModal();
+}
+
+async function loadDetail() {
+  const base = `projects/${state.project.key}/issues/${state.editing.number}/`;
+  const [comments, activity] = await Promise.all([api(base + 'comments/'), api(base + 'activity/')]);
+  $('comments').innerHTML = comments.map(c => `<div class="comment"><b>${esc(c.author.username)}</b> <span class="log">${esc(new Date(c.created_at).toLocaleString())}</span><div>${esc(c.body)}</div></div>`).join('') || '<div class="log">No comments.</div>';
+  $('activity').innerHTML = activity.map(a => `<div class="log">${esc(a.actor.username)} changed <b>${esc(a.field)}</b>: ${esc(a.old_value || '—')} → ${esc(a.new_value || '—')}</div>`).join('') || '<div class="log">No changes yet.</div>';
+}
+
+async function saveIssue() {
+  $('i-err').textContent = '';
+  const body = {
+    title: $('i-title').value.trim(), description: $('i-desc').value, type: $('i-type').value,
+    priority: $('i-priority').value, labels: $('i-labels').value,
+    assignee_id: $('i-assignee').value ? Number($('i-assignee').value) : null,
+  };
+  try {
+    const base = `projects/${state.project.key}/issues/`;
+    if (state.editing) await api(base + state.editing.number + '/', { method: 'PATCH', body });
+    else await api(base, { method: 'POST', body });
+    $('issue-dialog').close();
+    loadIssues();
+  } catch (e) { $('i-err').textContent = e.message; }
+}
+
+function logout() {
+  localStorage.removeItem('token'); localStorage.removeItem('username');
+  state.token = null; state.username = null; show('auth');
+}
+
+// ---- wiring
+$('login').onclick = () => authenticate('login');
+$('register').onclick = () => authenticate('register');
+$('logout').onclick = logout;
+$('back').onclick = loadProjects;
+$('p-create').onclick = async () => {
+  $('p-err').textContent = '';
+  try { await api('projects/', { method: 'POST', body: { key: $('p-key').value, name: $('p-name').value } }); $('p-key').value = $('p-name').value = ''; loadProjects(); }
+  catch (e) { $('p-err').textContent = e.message; }
+};
+$('project-list').onclick = (e) => { const p = e.target.closest('.p'); if (p) openProject(p.dataset.key); };
+$('new-issue').onclick = () => openIssueDialog(null);
+$('i-save').onclick = saveIssue;
+$('i-close').onclick = () => $('issue-dialog').close();
+$('i-delete').onclick = async () => {
+  if (!confirm('Delete ' + state.editing.key + '?')) return;
+  await api(`projects/${state.project.key}/issues/${state.editing.number}/`, { method: 'DELETE' });
+  $('issue-dialog').close(); loadIssues();
+};
+$('c-add').onclick = async () => {
+  const body = $('c-body').value.trim(); if (!body) return;
+  await api(`projects/${state.project.key}/issues/${state.editing.number}/comments/`, { method: 'POST', body: { body } });
+  $('c-body').value = ''; loadDetail();
+};
+$('add-member-btn').onclick = async () => {
+  $('b-err').textContent = '';
+  try { await api(`projects/${state.project.key}/members/`, { method: 'POST', body: { username: $('add-member').value.trim() } }); $('add-member').value = ''; openProject(state.project.key); }
+  catch (e) { $('b-err').textContent = e.message; }
+};
+for (const id of ['f-q', 'f-type', 'f-priority', 'f-assignee']) $(id).oninput = loadIssues;
+
+$('board').addEventListener('click', (e) => {
+  const card = e.target.closest('.issue');
+  if (card) openIssueDialog(state.issues.find(i => i.number === Number(card.dataset.number)));
+});
+$('board').addEventListener('dragstart', (e) => { const c = e.target.closest('.issue'); if (c) e.dataTransfer.setData('text/plain', c.dataset.number); });
+$('board').addEventListener('dragover', (e) => { const col = e.target.closest('.col'); if (col) { e.preventDefault(); col.classList.add('over'); } });
+$('board').addEventListener('dragleave', (e) => { const col = e.target.closest('.col'); if (col) col.classList.remove('over'); });
+$('board').addEventListener('drop', (e) => {
+  const col = e.target.closest('.col'); if (!col) return;
+  e.preventDefault(); col.classList.remove('over');
+  const number = Number(e.dataTransfer.getData('text/plain'));
+  const issue = state.issues.find(i => i.number === number);
+  if (issue && issue.status !== col.dataset.status) moveIssue(number, col.dataset.status);
+});
+
+if (state.token) loadProjects(); else show('auth');
+</script>
+</body>
+</html>
