@@ -7,6 +7,11 @@ services:
       POSTGRES_PASSWORD: tracker
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tracker -d tracker"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
   web:
     build: .
     environment:
@@ -15,7 +20,8 @@ services:
       POSTGRES_PASSWORD: tracker
       POSTGRES_HOST: db
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     ports:
       - "8000:8000"
 volumes:
